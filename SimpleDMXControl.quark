@@ -1,0 +1,11 @@
+(
+	\name: 			"SimpleDMXControl",
+	\path: 			"SimpleDMXControl", // path relative to the root Quarks folder
+	\summary:		"barebones DMX control. Currentl implements interfaces for Enttec DMX Pro and Enttec DMX Pro Mk2.",
+	\author: 		"Till Bovermann, Bruno Gola. Inspired by EnttecDMX by Jonathan Reus, 2016 and DMX quark by Marije Baalman.",
+	\organization: 	"plonk",
+	\country: 		"Germany",
+	\since: 		"2022",
+	\url:           "https://plonk.studio",
+	\version: 		0.1
+)

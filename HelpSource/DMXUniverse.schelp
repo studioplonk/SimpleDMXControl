@@ -1,0 +1,58 @@
+TITLE:: DMXUniverse
+summary:: a DMX universe data structure
+categories:: dmx
+related:: Classes/EnttecDMXPro, Classes/EnttecDMXProMk2
+
+DESCRIPTION::
+A barebones data structure for holding a DMX universe.
+See link::Classes/EnttecDMXPro:: for usage example.
+
+CLASSMETHODS::
+
+METHOD:: new
+argument:: header
+prepend universe by this. will be converted into 8-bit int.
+
+argument:: footer
+append universe by this. will be converted into 8-bit int.
+
+
+
+
+INSTANCEMETHODS::
+
+METHOD:: asInt8Array
+return 8-bit raw array ready to send over via DMX device.
+
+
+
+METHOD:: header, footer
+header resp. footer to be integrated into raw data structure.
+
+METHOD:: flush, clear
+empty internal state.
+
+METHOD:: addChannelVals
+add values to the universe.
+
+argument:: channel
+start channel
+argument:: vals
+values to be written. Will be casted to 8-bit integer.
+
+METHOD:: getChannelVals
+get current values from the universe.
+
+argument:: channel
+argument:: range
+
+METHOD:: state
+set complete state (512 vals).
+argument:: vals
+an array of 512 values. Will be casted to 8-bit integer.
+
+
+PRIVATE:: init
+argument:: argHeader
+argument:: argFooter
+

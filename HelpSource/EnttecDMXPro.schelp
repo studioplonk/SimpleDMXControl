@@ -1,0 +1,106 @@
+TITLE:: EnttecDMXPro
+summary:: interface for communication with the Enttec DMX pro device
+categories:: dmx
+related:: Classes/EnttecDMXProMk2
+
+DESCRIPTION::
+barebones and low-level implementation to handle DMX communication (send only) with the Enttec DMX Pro.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+create a new instance.
+
+argument:: portid
+one listed in code::SerialPort.devices::.
+argument:: cmdperiod
+if code::true::, the serial port will be closed on command-period.
+
+
+INSTANCEMETHODS::
+
+METHOD:: open, close
+open resp. close the connection to the serial device
+
+METHOD:: portid, port
+returns port, resp. portid of the used link::Classes/SerialPort::.
+
+METHOD:: flush
+empty state of internal link::Classes/DMXUniverse::
+
+
+METHOD:: addChannelVals
+add values to the universe. See link::Classes/DMXUniverse:: for details.
+
+argument:: channel
+start channel
+argument:: vals
+values written to this channel. will be casted to 8-bit integer.
+
+argument:: universeId
+ignored.
+Compatibility to devices with more than one universe such as the link::Classes/EnttecDMXProMk2::
+
+
+METHOD:: sendDMX
+send current state to device. If latency is not nil, sending is wrapped by a routine, otherwise it happens immediately.
+argument:: universeId
+ignored.
+Compatibility to devices with more than one universe such as the link::Classes/EnttecDMXProMk2::
+
+argument:: flush
+if code::true:: remove state from universe after sending.
+
+
+
+
+METHOD:: getUniverse, universe
+returns internal link::Classes/DMXUniverse::.
+
+argument:: id
+ignored.
+Compatibility to devices with more than one universe such as the link::Classes/EnttecDMXProMk2::
+
+
+METHOD:: trace
+if code::true::, print universe when code::sendDMX:: is called
+
+METHOD:: latency
+if not nil, sending is defered by this, otherwise sending happens immediately.
+
+PRIVATE: init
+argument:: argportid
+argument:: cmdperiod
+
+
+EXAMPLES::
+
+code::
+q = q ? ();
+
+SerialPort.devicePattern = "/dev/tty.usbserial-EN*";
+if(thisProcess.platform.name == \linux) { SerialPort.devicePattern = "/dev/ttyU*" };
+q.dmxPort = SerialPort.devices[0];
+q.enttec = EnttecDMXPro(q.dmxPort);
+// q.enttec.latency = q.nodeLatency;
+
+q.enttec.open;
+// q.enttec.trace = true;
+
+
+// cameo THUNDERWASH 600 RGBW
+// DMX Mode   = 7CH_2
+// DMX Adress = 477
+q.light = {|env, r = 255, g = 255, b = 255, w = 255, dim = 255, flush = true, channel = 477|
+	q.enttec.addChannelVals(channel, [dim, 0, 10, r, g, b, w]);
+	q.enttec.sendDMX(1, flush);
+};
+
+q.lightOff = {|env, flush = true, channel = 477|
+	q.light(0, 0, 0, 0, 0, flush, channel)
+};
+
+q.light(*(({255.rand}!3) ++ [0, 128]))
+q.lightOff
+::
