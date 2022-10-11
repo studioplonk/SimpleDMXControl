@@ -1,11 +1,11 @@
-TITLE:: DMXUniverse
+TITLE:: SimpleDMXUniverse
 summary:: a DMX universe data structure
 categories:: dmx
-related:: Classes/EnttecDMXPro, Classes/EnttecDMXProMk2
+related:: Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2
 
 DESCRIPTION::
 A barebones data structure for holding a DMX universe.
-See link::Classes/EnttecDMXPro:: for usage example.
+See link::Classes/SimpleEnttecDMXPro:: for usage example.
 
 CLASSMETHODS::
 
@@ -56,3 +56,26 @@ PRIVATE:: init
 argument:: argHeader
 argument:: argFooter
 
+EXAMPLES::
+
+code::
+d = SimpleDMXUniverse([0, 1], [-100])
+
+d = SimpleDMXUniverse()
+d.header
+d.addChannelVals(12, [1565])
+d.addChannelVals(12, 1565)
+
+d.state[11]
+
+d.getChannelVals(12)
+
+
+d.flush
+
+d.state
+
+Int8Array.newFrom(d.header ++ d.state ++ d.footer)
+
+d.asInt8Array
+::

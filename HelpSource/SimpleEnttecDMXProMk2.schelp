@@ -1,7 +1,7 @@
-TITLE:: EnttecDMXPro
+TITLE:: SimpleEnttecDMXPro
 summary:: interface for communication with the Enttec DMX pro Mk2 device
 categories:: dmx
-related:: Classes/EnttecDMXPro, Classes/DMXUniverse
+related:: Classes/SimpleEnttecDMXPro, Classes/SimpleDMXUniverse
 
 DESCRIPTION::
 barebones and low-level implementation to handle DMX communication (send only) with the Enttec DMX Pro Mk2 (two universes).
@@ -27,11 +27,11 @@ METHOD:: portid, port
 returns port, resp. portid of the used link::Classes/SerialPort::.
 
 METHOD:: flush
-empty state of internal link::Classes/DMXUniverse::
+empty state of internal link::Classes/SimpleDMXUniverse::
 
 
 METHOD:: addChannelVals
-add values to the universe. See link::Classes/DMXUniverse:: for details.
+add values to the universe. See link::Classes/SimpleDMXUniverse:: for details.
 
 argument:: channel
 start channel
@@ -52,10 +52,10 @@ if code::true:: remove state from universe after sending.
 
 
 METHOD:: universes
-returns internal link::Classes/DMXUniverse::.
+returns internal link::Classes/SimpleDMXUniverse::.
 
 METHOD:: getUniverse
-returns internal link::Classes/DMXUniverse::.
+returns internal link::Classes/SimpleDMXUniverse::.
 
 argument:: id
 the universe ID that should be returned.
@@ -79,7 +79,7 @@ q = q ? ();
 SerialPort.devicePattern = "/dev/tty.usbserial-EN*";
 if(thisProcess.platform.name == \linux) { SerialPort.devicePattern = "/dev/ttyU*" };
 q.dmxPort = SerialPort.devices[0];
-q.enttec = EnttecDMXProMk2s(q.dmxPort);
+q.enttec = SimpleEnttecDMXProMk2s(q.dmxPort);
 // q.enttec.latency = q.nodeLatency;
 
 q.enttec.open;

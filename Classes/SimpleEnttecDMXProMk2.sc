@@ -1,4 +1,4 @@
-EnttecDMXProMk2 {
+SimpleEnttecDMXProMk2 {
 	// EnttecDMX Pro Mk2 Interface
 	// Till Bovermann, Bruno Gola, 2022
 	// inspired by EnttecDMX by Jonathan Reus, 2016 and Marije Baalmans dmx quark.
@@ -25,11 +25,11 @@ EnttecDMXProMk2 {
 	init {|argportid, numchannels, cmdperiod|
 
 		universes = [
-			DMXUniverse(
+			SimpleDMXUniverse(
 				[0x7E, 6, (512+1) & 0xFF, ((512+1) >> 8) & 0xFF, 0],
 				[0xE7]
 			),
-			DMXUniverse(
+			SimpleDMXUniverse(
 				[0x7E, 202, (512+1) & 0xFF, ((512+1) >> 8) & 0xFF, 0],
 				[0xE7]
 			)
@@ -89,6 +89,14 @@ EnttecDMXProMk2 {
 
 	}
 
+	setState {|state, universeId = 1|
+		var universe = this.universes[universeId - 1];
+
+		universe.notNil.if{
+			universe.state = state;
+		};
+	}
+
 
 	sendDMX {|universeId = 1, flush = true|
 		var array = this.getUniverse(universeId).asInt8Array;
@@ -119,7 +127,7 @@ EnttecDMXProMk2 {
 	}
 
 	close {
-		"Closing serial ports for EnttecDMXProMk2.".postln;
+		"Closing serial ports for SimpleEnttecDMXProMk2.".postln;
 		// SerialPort.closeAll;
 		port.close;
 		this.release;

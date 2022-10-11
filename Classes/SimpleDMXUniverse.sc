@@ -1,4 +1,4 @@
-DMXUniverse {
+SimpleDMXUniverse {
 	var <header, <footer;
 	var <state;
 
@@ -47,24 +47,3 @@ DMXUniverse {
 
 }
 
-/*
-d = DMXUniverse([0, 1], [-100])
-
-d = DMXUniverse()
-d.header
-d.addChannelVals(12, [1565])
-d.addChannelVals(12, 1565)
-
-d.state[11]
-
-d.getChannelVals(12)
-
-
-d.flush
-
-d.state
-
-Int8Array.newFrom(d.header ++ d.state ++ d.footer)
-
-d.asInt8Array
-*/

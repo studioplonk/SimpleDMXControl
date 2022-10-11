@@ -1,4 +1,4 @@
-EnttecDMXPro {
+SimpleEnttecDMXPro {
 	// EnttecDMX Pro Interface
 	// Till Bovermann, Bruno Gola, 2022
 	// inspired by EnttecDMX by Jonathan Reus, 2016 and Marije Baalmans dmx quark.
@@ -24,7 +24,7 @@ EnttecDMXPro {
 	// 231 - end byte 0xE7
 	init {|argportid, cmdperiod |
 
-		universe = DMXUniverse(
+		universe = SimpleDMXUniverse(
 			[0x7E, 6, (512+1) & 0xFF, ((512+1) >> 8) & 0xFF, 0],
 			[0xE7]
 		);
@@ -38,7 +38,6 @@ EnttecDMXPro {
 			});
 		};
 	}
-
 
 	open {
 
@@ -56,7 +55,7 @@ EnttecDMXPro {
 
 
 	addChannelVals {|channel = 1, vals = 0, universeId = 1|
-		// universeId ignored in this class, added for compatibility with EnttecDMXProMk2
+		// universeId ignored in this class, added for compatibility with SimpleEnttecDMXProMk2
 		(universeId == 1).if{
 			universe.addChannelVals(channel, vals)
 		}
@@ -70,9 +69,15 @@ EnttecDMXPro {
 		})
 	}
 
+	setState {|state, universeId = 1|
+		// fail silently to be compatible with multi-universe DMX devices 
+		(universeId == 1).if{
+			this.universe.state = state;
+		};
+	}
 
 	sendDMX {|universeId = 1, flush = true|
-		// universeId ignored in this class, added for compatibility with EnttecDMXProMk2
+		// universeId ignored in this class, added for compatibility with SimpleEnttecDMXProMk2
 		var array = this.getUniverse(universeId);
 
 		array.notNil.if{

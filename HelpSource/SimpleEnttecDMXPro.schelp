@@ -1,7 +1,7 @@
-TITLE:: EnttecDMXPro
+TITLE:: SimpleEnttecDMXPro
 summary:: interface for communication with the Enttec DMX pro device
 categories:: dmx
-related:: Classes/EnttecDMXProMk2
+related:: Classes/SimpleEnttecDMXProMk2
 
 DESCRIPTION::
 barebones and low-level implementation to handle DMX communication (send only) with the Enttec DMX Pro.
@@ -27,11 +27,11 @@ METHOD:: portid, port
 returns port, resp. portid of the used link::Classes/SerialPort::.
 
 METHOD:: flush
-empty state of internal link::Classes/DMXUniverse::
+empty state of internal link::Classes/SimpleDMXUniverse::
 
 
 METHOD:: addChannelVals
-add values to the universe. See link::Classes/DMXUniverse:: for details.
+add values to the universe. See link::Classes/SimpleDMXUniverse:: for details.
 
 argument:: channel
 start channel
@@ -40,14 +40,14 @@ values written to this channel. will be casted to 8-bit integer.
 
 argument:: universeId
 ignored.
-Compatibility to devices with more than one universe such as the link::Classes/EnttecDMXProMk2::
+Compatibility to devices with more than one universe such as the link::Classes/SimpleEnttecDMXProMk2::
 
 
 METHOD:: sendDMX
 send current state to device. If latency is not nil, sending is wrapped by a routine, otherwise it happens immediately.
 argument:: universeId
 ignored.
-Compatibility to devices with more than one universe such as the link::Classes/EnttecDMXProMk2::
+Compatibility to devices with more than one universe such as the link::Classes/SimpleEnttecDMXProMk2::
 
 argument:: flush
 if code::true:: remove state from universe after sending.
@@ -56,11 +56,11 @@ if code::true:: remove state from universe after sending.
 
 
 METHOD:: getUniverse, universe
-returns internal link::Classes/DMXUniverse::.
+returns internal link::Classes/SimpleDMXUniverse::.
 
 argument:: id
 ignored.
-Compatibility to devices with more than one universe such as the link::Classes/EnttecDMXProMk2::
+Compatibility to devices with more than one universe such as the link::Classes/SimpleEnttecDMXProMk2::
 
 
 METHOD:: trace
@@ -82,7 +82,7 @@ q = q ? ();
 SerialPort.devicePattern = "/dev/tty.usbserial-EN*";
 if(thisProcess.platform.name == \linux) { SerialPort.devicePattern = "/dev/ttyU*" };
 q.dmxPort = SerialPort.devices[0];
-q.enttec = EnttecDMXPro(q.dmxPort);
+q.enttec = SimpleEnttecDMXPro(q.dmxPort);
 // q.enttec.latency = q.nodeLatency;
 
 q.enttec.open;
