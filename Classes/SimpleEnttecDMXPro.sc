@@ -3,13 +3,13 @@ SimpleEnttecDMXPro {
 	// Till Bovermann, Bruno Gola, 2022
 	// inspired by EnttecDMX by Jonathan Reus, 2016 and Marije Baalmans dmx quark.
 
-	var <port, <>portid;
+	var <port, <>portid, <baudrate;
 	var <>universe;
 	var <>trace = false;
 	var <>latency = nil;
 
-	*new {|portid, cmdperiod = true|
-		^super.new.init(portid, cmdperiod);
+	*new {|portid, baudrate = 57600, universeSize = 512, cmdperiod = true|
+		^super.new.init(portid, baudrate, universeSize, cmdperiod);
 	}
 
 
@@ -22,15 +22,15 @@ SimpleEnttecDMXPro {
 	// 0 - start code
 	// b1 ... bn channel values (each 1 byte)
 	// 231 - end byte 0xE7
-	init {|argportid, cmdperiod |
+	init {|argportid, argBaudrate, universeSize, cmdperiod|
 
 		universe = SimpleDMXUniverse(
-			[0x7E, 6, (512+1) & 0xFF, ((512+1) >> 8) & 0xFF, 0],
+			[0x7E, 6, (universeSize+1) & 0xFF, ((universeSize+1) >> 8) & 0xFF, 0],
 			[0xE7]
 		);
 
 		portid = argportid;
-
+		baudrate = argBaudrate;
 
 		if(cmdperiod == true) {
 			CmdPeriod.add({
@@ -50,7 +50,7 @@ SimpleEnttecDMXPro {
 			SerialPort.devicePattern = tmp;
 		};
 		("Opening serial port" + portid + " ...").postln;
-		port = SerialPort.new(portid, 57600, crtscts: true);
+		port = SerialPort.new(portid, baudrate, crtscts: true);
 	}
 
 
@@ -70,7 +70,7 @@ SimpleEnttecDMXPro {
 	}
 
 	setState {|state, universeId = 1|
-		// fail silently to be compatible with multi-universe DMX devices 
+		// fail silently to be compatible with multi-universe DMX devices
 		(universeId == 1).if{
 			this.universe.state = state;
 		};

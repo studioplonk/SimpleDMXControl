@@ -16,6 +16,8 @@ prepend universe by this. will be converted into 8-bit int.
 argument:: footer
 append universe by this. will be converted into 8-bit int.
 
+argument:: size
+size of universe. default (and max) is 512.
 
 
 

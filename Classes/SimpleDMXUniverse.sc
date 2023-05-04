@@ -1,20 +1,21 @@
 SimpleDMXUniverse {
 	var <header, <footer;
-	var <state;
+	var <state, size;
 
-	*new{|header ([]), footer ([])|
-		^super.new.init(header, footer)
+	*new{|header ([]), footer ([]), size = 512|
+		^super.new.init(header, footer, size)
 	}
 
 
-	init {|argHeader, argFooter|
+	init {|argHeader, argFooter, argSize|
 		header = argHeader;
 		footer = argFooter;
+		size = argSize;
 		this.clear;
 	}
 
 	flush {
-		state = 0!512;
+		state = 0!size;
 	}
 
 	clear {

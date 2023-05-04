@@ -3,13 +3,13 @@ SimpleEnttecDMXProMk2 {
 	// Till Bovermann, Bruno Gola, 2022
 	// inspired by EnttecDMX by Jonathan Reus, 2016 and Marije Baalmans dmx quark.
 
-	var <port, <>portid;
+	var <port, <>portid, <baudrate;
 	var <universes;
 	var <>trace = false;
 	var <>latency = nil;
 
-	*new {|portid=nil, cmdperiod=true|
-		^super.new.init(portid, cmdperiod);
+	*new {|portid, baudrate = 57600, universeSize = 512, cmdperiod = true|
+		^super.new.init(portid, baudrate, universeSize, cmdperiod);
 	}
 
 
@@ -22,21 +22,22 @@ SimpleEnttecDMXProMk2 {
 	// 0 - start code
 	// b1 ... bn channel values (each 1 byte)
 	// 231 - end byte 0xE7
-	init {|argportid, numchannels, cmdperiod|
+	init {|argportid, argBaudrate, universeSize, cmdperiod |
 
 		universes = [
 			SimpleDMXUniverse(
-				[0x7E, 6, (512+1) & 0xFF, ((512+1) >> 8) & 0xFF, 0],
-				[0xE7]
+				[0x7E, 6, (universeSize+1) & 0xFF, ((universeSize+1) >> 8) & 0xFF, 0],
+				[0xE7], universeSize
 			),
 			SimpleDMXUniverse(
-				[0x7E, 202, (512+1) & 0xFF, ((512+1) >> 8) & 0xFF, 0],
-				[0xE7]
+				[0x7E, 202, (universeSize+1) & 0xFF, ((universeSize+1) >> 8) & 0xFF, 0],
+				[0xE7], universeSize
 			)
 		];
 
 
 		portid = argportid;
+		baudrate = argBaudrate;
 
 
 		if(cmdperiod == true) {
@@ -58,7 +59,7 @@ SimpleEnttecDMXProMk2 {
 			SerialPort.devicePattern = tmp;
 		};
 		("Opening serial port" + portid + " ...").postln;
-		port = SerialPort.new(portid, 57600, crtscts: true);
+		port = SerialPort.new(portid, baudrate, crtscts: true);
 
 		this.pr_initDevice;
 	}
