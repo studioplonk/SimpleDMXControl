@@ -53,10 +53,15 @@ SimpleEnttecDMXPro {
 		port = SerialPort.new(portid, baudrate, crtscts: true);
 	}
 
+	add {|fixture|
+		(fixture.universeId == 0).if{
+			universe.add(fixture)
+		}
+	}
 
-	addChannelVals {|channel = 1, vals = 0, universeId = 1|
+	addChannelVals {|channel = 1, vals = 0, universeId = 0|
 		// universeId ignored in this class, added for compatibility with SimpleEnttecDMXProMk2
-		(universeId == 1).if{
+		(universeId == 0).if{
 			universe.addChannelVals(channel, vals)
 		}
 	}

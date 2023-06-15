@@ -26,16 +26,16 @@ SimpleDMXUniverse {
 		^Int8Array.newFrom(header ++ state ++ footer)
 	}
 
+	add {|fixture|
+		this.addChannelVals(fixture.dmxAddr, fixture.state)
+	}
+
 	addChannelVals {|channel = 1, vals = 0|
 		// insert values
-		// channel is in range [1..512]
+		// channel is in range [0..511]
 		vals = if (vals.isArray) { vals } { [ vals ] };
 
-		(channel > 2).if({
-			state = state[0..(channel-2)] ++ vals ++ state[(channel-1 + vals.size) ..];
-		}, {
-			state = vals ++ state[(channel-1 + vals.size) ..];
-		})
+		state = state.overWrite(vals, channel);
 	}
 
 	state_{|vals|
@@ -47,4 +47,7 @@ SimpleDMXUniverse {
 	}
 
 }
+
+
+
 

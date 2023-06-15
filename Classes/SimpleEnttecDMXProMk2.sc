@@ -80,13 +80,16 @@ SimpleEnttecDMXProMk2 {
 		};
 	}
 
+	add {|fixture|
+		this.getUniverse(fixture.universeId).add(fixture)
+	}
 
-	addChannelVals {|channel = 1, vals = 0, universeId = 1|
+	addChannelVals {|channel = 1, vals = 0, universeId = 0|
 		this.getUniverse(universeId).addChannelVals(channel, vals)
 	}
 
-	getUniverse {|id = 1|
-		^universes[id - 1]
+	getUniverse {|id = 0|
+		^universes[id]
 
 	}
 
