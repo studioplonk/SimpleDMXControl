@@ -1,11 +1,12 @@
 TITLE:: SimpleDMXUniverse
 summary:: a DMX universe data structure
-categories:: dmx
-related:: Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2
+categories::  External Control>DMX
+related:: Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXFixture
 
 DESCRIPTION::
 A barebones data structure for holding a DMX universe.
 See link::Classes/SimpleEnttecDMXPro:: for usage example.
+
 
 CLASSMETHODS::
 
@@ -17,22 +18,31 @@ argument:: footer
 append universe by this. will be converted into 8-bit int.
 
 argument:: size
-size of universe. default (and max) is 512.
+Size of universe. default (and max) is 512.
+Resizing flushes the universe.
 
 
 
 INSTANCEMETHODS::
 
 METHOD:: asInt8Array
-return 8-bit raw array ready to send over via DMX device.
+returns 8-bit raw array ready to send over via DMX device.
 
 
 
 METHOD:: header, footer
-header resp. footer to be integrated into raw data structure.
+header resp. footer to be integrated into raw data structure. Needs to be an array of integers.
 
-METHOD:: flush, clear
+METHOD:: flush, clear, blackout
 empty internal state.
+
+METHOD:: add
+adds current state of a link::Classes/SimpleDMXFixture:: to the universe.
+
+argument:: fixture
+instance to be added.
+
+
 
 METHOD:: addChannelVals
 add values to the universe.
@@ -40,7 +50,7 @@ add values to the universe.
 argument:: channel
 start channel
 argument:: vals
-values to be written. Will be casted to 8-bit integer.
+values to be written. Will be cropped to size.
 
 METHOD:: getChannelVals
 get current values from the universe.
@@ -49,35 +59,84 @@ argument:: channel
 argument:: range
 
 METHOD:: state
-set complete state (512 vals).
+set complete state.
 argument:: vals
-an array of 512 values. Will be casted to 8-bit integer.
+an array of values. Will be cropped to size.
 
 
 PRIVATE:: init
-argument:: argHeader
-argument:: argFooter
 
 EXAMPLES::
 
+SUBSECTION:: Basic usage
+
 code::
-d = SimpleDMXUniverse([0, 1], [-100])
+// create an  instance of a specific size and add some values
+d = SimpleDMXUniverse(64);
+d.addChannelVals(12, [15, 14]);
 
-d = SimpleDMXUniverse()
-d.header
-d.addChannelVals(12, [1565])
-d.addChannelVals(12, 1565)
+// get values of 10 channels starting at channel 11 
+d.getChannelVals(11, 10); // indexing starts at 0
 
-d.state[11]
+d.state; // return current state (omitting header and footer)
 
-d.getChannelVals(12)
+// return Int8Array. 
+// This is what you want to send over to your DMX device.
+d.asInt8Array;
+
+// header is empty
+d.header;
+
+// set header and footer
+d.header = [1, 2, 3, 4];
+d.footer = [10, 20, 30, 40];
+
+// state is still the same
+d.state;
+d.state.size; // -> 64
+
+// but asInt8Array includes header and footer elements now
+d.asInt8Array;
+d.asInt8Array.size; // -> 72 (4 + 64 + 4)
+
+// flush (zero-out) state
+d.flush;
+
+// state is empty
+d.state;
+
+// add some content
+d.addChannelVals(1, {256}!20);
+d.state;
 
 
-d.flush
+// resizing flushes array
+d.size = 8;
+d.state;
+::
 
-d.state
+ SUBSECTION:: Working with SimpleDMXFixtures
 
-Int8Array.newFrom(d.header ++ d.state ++ d.footer)
+code::
+d = SimpleDMXUniverse(32);
 
-d.asInt8Array
+// a nondescript 10dim fixture
+f = SimpleDMXFixture(0, 10).setRaw(2, [25, 26, 27, 28]);
+
+d.add(f);
+d.state;
+
+f.set(0, {1.0.rand}!10); // set random values
+d.add(f);
+d.state;
+
+d.flush;
+
+// an Astera LED Par at dmx address 20
+g = SimpleDMXFixture.newFor(\ax3, \13, 20);
+g.setColor(Color.green);
+d.add(g);
+d.state; 
+// sets green and dim value accordingly1
+// -> [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 ::

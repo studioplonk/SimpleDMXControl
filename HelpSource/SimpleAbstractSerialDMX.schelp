@@ -1,0 +1,48 @@
+TITLE:: SimpleAbstractSerialDMX
+summary:: an abstract Serial-based DMX interface 
+categories::  External Control>DMX
+related:: Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXUniverse, Classes/SimpleDMXFixture, Classes/SerialPort
+
+DESCRIPTION::
+Abstract barebones DMX interface.  Not intended to be used directly, but rather to be subclassed by a class that implements the actual DMX interface. link::Classes/SerialPort:: edition.
+
+note::Although DMX addresses are typically documented 1-based, all SimpleDMX data structures are 0-based.::
+
+METHOD:: new
+create a new instance
+
+ARGUMENT:: portid
+port id of the serial port. If code::nil::, the first available port will be used. 
+
+ARGUMENT:: baudrate
+desired baud rate
+
+ARGUMENT:: universeSizes
+An array of integers, one for each universe, specifying the number of channels in each universe.  If not specified, defaults to 512 channels per universe.
+
+ARGUMENT:: cmdperiod
+if code::true::, the serial port will be closed on command-period.
+
+
+INSTANCEMETHODS::
+
+PRIVATE:: pr_sendDMX, initSerialInterface, pr_initDevice
+
+
+METHOD:: baudrate
+desired baud rate
+
+METHOD:: portid
+port id of the serial port
+
+METHOD:: port
+serial port object
+
+
+METHOD:: open
+open the serial port and initialize the device
+
+
+METHOD:: close
+close the serial port
+

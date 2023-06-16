@@ -3,8 +3,10 @@ SimpleDMXFixture {
 	classvar <models;
 	var <dmxAddr;
 	var <universeId;
-	var <>state;
+	var <state;
+	var <numChannels;
 	var <desc;
+	var <idxKeys;
 
 	*initClass {
 		models = (
@@ -24,9 +26,8 @@ SimpleDMXFixture {
 					channelTypes: #[dim, strobe, dur, r, g, b, white]
 				)
 			)
-
-
-		)
+		);
+		dmxSpec = ControlSpec(0, 255, \lin, 1);
 	}
 
 	*new {|dmxAddr = 0, numChannels = 1, universeId = 0, desc|
@@ -41,64 +42,72 @@ SimpleDMXFixture {
 		desc[\model] = model;
 		obj = this.new(dmxAddr, numChannels, universeId, desc);
 
-		obj.desc[\rgbIdx] = obj.desc[\channelTypes].detectIndex{|v| v == \r};
-
 		^obj
 	}
 
-
-
-	setColor {|color|
-		state.overWrite((color.asArray[0..2] * 255).asInteger, desc[\rgbIdx])
+	*printKnownModels {
+		models.keys.asArray.sort.do{|model|
+			models[model].keys.asArray.sort.do{|mode|
+				"SimpleDMXFixture.newFrom(%, %, <addr>)".format(
+					model.asCompileString, 
+					mode.asCompileString
+				).postln
+			}
+		}
 	}
 
 	init {|argDmxAddr, argNumChannels, argUniverseId, argDesc|
 		dmxAddr = argDmxAddr;
-		desc = argDesc;
+		desc = argDesc ?? {()};
 		universeId = argUniverseId;
 
-		state = 0!argNumChannels;
+		idxKeys = desc[\channelTypes].collectAs({|key, i|
+			key -> i
+		}, Event);
+		numChannels = argNumChannels;
+		this.flush;
 	}
 
-	numChannels {
-		^state.size;
+	flush {
+		state = Array.fill(numChannels, 0);
 	}
+
+	// expects int values between 0..255
+	setRaw {|key, rawVal|
+		var idx;
+		
+		key.isKindOf(Integer).if({
+			idx = key;
+		}, {
+			idx = idxKeys[key]
+		});
+
+		idx.notNil.if{
+			state.overWrite(rawVal.asArray, idx);
+		};
+	}
+
+	// expects values between 0..1.0
+	set {|key, val|
+		this.setRaw(key, dmxSpec.map(val).asInteger)
+	}
+
+	// a color's alpha is considered dim (if available in fixture spec, otherwise ignored).
+	setColor {|color|
+		var rgbw = color.asArray;
+		this.set(\dim, rgbw.last);
+		this.set(\r, rgbw[0..2]);
+	}
+
+	state_ {|val|
+		// restrict to numChannels
+		val = val.asArray;
+		(val.size < numChannels).if{
+			val = val ++ Array.fill(numChannels-val.size, 0);
+		};
+		state = val[0..numChannels-1];
+	}
+
 }
 
 
-/*
-(
-q = q ? ();
-
-SerialPort.devicePattern = "/dev/tty.usbserial-EN*";
-if(thisProcess.platform.name == \linux) { SerialPort.devicePattern = "/dev/ttyU*" };
-q.dmxPort = SerialPort.devices[0];
-q.enttec = SimpleEnttecDMXPro(q.dmxPort);
-// q.enttec.latency = q.nodeLatency;
-
-q.enttec.open;
-)
-
-
-b = SimpleDMXFixture.newFor(\ax3, \13, 0, 0)
-b.state = {255.rand}!7
-b.state = [255, 255, 255, 255, 255, 0]
-
-b.setColor(Color.rand)
-b.state
-q.enttec.add(b); q.enttec.sendDMX(flush: true);
-
-
-
-c = (0..7).collect{|fixtureId| SimpleDMXFixture.newFor(\ax3, \13, fixtureId * 7)}
-
-(
-c.do{|f|
-//	f.state = {255.rand}!6 ++ 0;
-	f.state = {255}!6 ++ 0;
-	q.enttec.add(f)
-};
-
-q.enttec.sendDMX(flush: true);
-)
-*/

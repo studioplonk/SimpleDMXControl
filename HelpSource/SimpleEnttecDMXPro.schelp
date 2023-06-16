@@ -1,7 +1,7 @@
 TITLE:: SimpleEnttecDMXPro
 summary:: interface for communication with the Enttec DMX pro device
-categories:: dmx
-related:: Classes/SimpleEnttecDMXProMk2
+categories::  External Control>DMX
+related:: Classes/SimpleAbstractSerialDMX, Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXUniverse, Classes/SimpleDMXFixture, Classes/SerialPort
 
 DESCRIPTION::
 barebones and low-level implementation to handle DMX communication (send only) with the Enttec DMX Pro.
@@ -17,65 +17,17 @@ one listed in code::SerialPort.devices::.
 argument:: baudrate
 baudrate of the serial port.
 argument:: universeSize
-size of the initial DMX universes.
+size of the initial DMX universe.
 argument:: cmdperiod
 if code::true::, the serial port will be closed on command-period.
 
 
 INSTANCEMETHODS::
 
-METHOD:: open, close
-open resp. close the connection to the serial device
-
-METHOD:: portid, port
-returns port, resp. portid of the used link::Classes/SerialPort::.
-
-METHOD:: flush
-empty state of internal link::Classes/SimpleDMXUniverse::
-
-
-METHOD:: addChannelVals
-add values to the universe. See link::Classes/SimpleDMXUniverse:: for details.
-
-argument:: channel
-start channel
-argument:: vals
-values written to this channel. will be casted to 8-bit integer.
-
-argument:: universeId
-ignored.
-Compatibility to devices with more than one universe such as the link::Classes/SimpleEnttecDMXProMk2::
-
-
-METHOD:: sendDMX
-send current state to device. If latency is not nil, sending is wrapped by a routine, otherwise it happens immediately.
-argument:: universeId
-ignored.
-Compatibility to devices with more than one universe such as the link::Classes/SimpleEnttecDMXProMk2::
-
-argument:: flush
-if code::true:: remove state from universe after sending.
+PRIVATE:: initSimpleEnttecDMXPro
 
 
 
-
-METHOD:: getUniverse, universe
-returns internal link::Classes/SimpleDMXUniverse::.
-
-argument:: id
-ignored.
-Compatibility to devices with more than one universe such as the link::Classes/SimpleEnttecDMXProMk2::
-
-
-METHOD:: trace
-if code::true::, print universe when code::sendDMX:: is called
-
-METHOD:: latency
-if not nil, sending is defered by this, otherwise sending happens immediately.
-
-PRIVATE: init
-argument:: argportid
-argument:: cmdperiod
 
 
 EXAMPLES::

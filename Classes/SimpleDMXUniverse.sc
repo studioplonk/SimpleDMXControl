@@ -1,8 +1,8 @@
 SimpleDMXUniverse {
-	var <header, <footer;
+	var <>header, <>footer;
 	var <state, size;
 
-	*new{|header ([]), footer ([]), size = 512|
+	*new{|size = 512, header ([]), footer ([])|
 		^super.new.init(header, footer, size)
 	}
 
@@ -22,6 +22,10 @@ SimpleDMXUniverse {
 		this.flush;
 	}
 
+	blackout {
+		this.flush;
+	}
+
 	asInt8Array {
 		^Int8Array.newFrom(header ++ state ++ footer)
 	}
@@ -32,18 +36,21 @@ SimpleDMXUniverse {
 
 	addChannelVals {|channel = 1, vals = 0|
 		// insert values
-		// channel is in range [0..511]
-		vals = if (vals.isArray) { vals } { [ vals ] };
+		state = state.overWrite(vals.asArray, channel);
+	}
 
-		state = state.overWrite(vals, channel);
+	size_ {|newSize|
+		size = newSize;
+		this.flush;
 	}
 
 	state_{|vals|
-		state = vals[0..511] ++ (0!(max(512 - vals.size, 0)))
+		// make sure we have enough values
+		state = vals[0..(size-1)] ++ (0!(max(size - vals.size, 0)))
 	}
 
-	getChannelVals {|channel = 1, range = 1|
-		^state[(channel - 1) .. (channel - 2 + range)]
+	getChannelVals {|channel = 0, range = 1|
+		^state[(channel) .. (channel - 1 + range)]
 	}
 
 }

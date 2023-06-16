@@ -1,0 +1,180 @@
+TITLE:: SimpleDMXFixture
+summary:: a DMX fixture
+categories::  External Control>DMX
+related:: Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXUniverse
+
+DESCRIPTION::
+A class to represent a DMX fixture.  A fixture is e.g. an LED par or a moving light.  It has a number of channels, a DMX address, and a description.  It can be set to a color, or to a raw value.
+
+note::Although DMX addresses are typically documented 1-based, all SimpleDMX data structures are 0-based.::
+
+
+CLASSMETHODS::
+
+METHOD:: new
+create a new non-descript fixture. 
+
+code::
+// a non-descript LED Par with rgbw-Control and global dim
+f = SimpleDMXFixture(0, 4, desc: (\channelTypes: #[dim, r, g, b, white]));
+f.setColor(Color.red);
+f.state; // -> [ 255, 255, 0, 0 ]
+::
+
+
+ARGUMENT:: dmxAddr
+the starting address of the fixture (0-based). 
+
+ARGUMENT:: numChannels
+number of channels the fixture uses.
+
+ARGUMENT:: universeId
+the id of the universe the fixture is in. This is useful for SimpleDMX devices that support multiple universes. If you are using a single universe, you should keep it at its default value (0).
+
+ARGUMENT:: desc
+a code::Dictionary:: containing the description of this fixture. It may contain the following keys:
+
+definitionlist::
+     ## code::name:: (optional)
+     || The name of the fixture.
+     ## code::type:: (optional)
+     || The type of the fixture.
+     ## code::model:: (optional)
+     || The model of the fixture.
+     ## code::functionality:: (optional)
+     || A short description of the functionality of the fixture, e.g. code::"DRGBAWS"::.
+     ## code::channelTypes:: (recommended)
+     || An code::Array:: of code::Symbols::s describing the semantic of each channel. The symbols are typically one of code:: #[r, g, b, a, white, dim, strobe, dur, x, y, z]::.
+::
+
+
+
+METHOD:: newFor
+create a new fixture for a given model.
+
+code::
+SimpleDMXFixture.printKnownModels; // prints all known models to the console
+
+// an Astera AX3 in mode 13 with address 20 (0-based)
+f = SimpleDMXFixture.newFor(\ax3, \13, dmxAddr: 20);
+f.setColor(Color.red);
+f.state; // -> [ 255, 255, 0, 0, 0, 0, 0 ]
+::
+
+ARGUMENT:: model
+the model of the fixture. This is a code::Symbol::, e.g. code:::ax3::.
+
+ARGUMENT:: mode
+the mode the fixture is configured to. This is a code::Symbol::, e.g. code:::'13'::.
+
+ARGUMENT:: dmxAddr
+the starting address of the fixture (0-based).
+
+ARGUMENT:: universeId
+the id of the universe the fixture is in. This is useful for SimpleDMX devices that support multiple universes. If you are using a single universe, you should keep it at its default value (0).
+
+
+METHOD:: models
+a dictionary containing all known models. The keys are the model names, the values are dictionaries of modes. See code::newFor:: for more details.
+
+METHOD:: printKnownModels
+print all known models to the console. See code::newFor:: for more a usage example.
+
+
+PRIVATE:: initClass, dmxSpec
+
+
+INSTANCEMETHODS::
+
+PRIVATE:: init, idxKeys
+
+SUBSECTION:: Setting values
+
+METHOD:: set
+set the value(s) of a channel (normalised).
+
+code::
+// a non-descript LED Par with rgbw-Control and global dim
+f = SimpleDMXFixture(0, 5, desc: (\channelTypes: #[dim, r, g, b, white]));
+f.set(0, 0.5); // set dim to 0.5
+f.set(1, 0.5); // set r to 0.5
+f.set(\g, [0.89, 0.4]); // set g/b to 0.89, and 0.4 resp.
+f.state; // -> [ 128, 128, 227, 102, 0 ]
+::
+
+ARGUMENT:: key
+the key of the channel to set. Either an index (Int), or one of the keys in code::channelTypes::.
+
+ARGUMENT:: val
+either a numeric normalised value or an array of normalised values.
+The values will be assigned to the channels subsequent to the channel specified by code::key::.
+
+
+METHOD:: setColor
+A convenience method that sets the values of the channels code::r::, code::g::, code::b:: and code::dim::.
+
+note::This method works only if the fixture has a code::channelTypes:: description that contains code::r::, code::g::, code::b::, and code::dim::. The values for code::r::, code::g::, and code::b:: need to be next to each other and in this order.::
+
+code::
+// an Astera AX3 in mode 13 with address 20 (0-based)
+f = SimpleDMXFixture.newFor(\ax3, \13, dmxAddr: 20);
+f.setColor(Color.red);
+f.state; // -> [ 255, 255, 0, 0, 0, 0, 0 ]
+::
+
+ARGUMENT:: color
+A link::Classes/Color:: object.
+
+
+
+METHOD:: setRaw
+set the value of a channel as raw Integers.
+
+
+ARGUMENT:: key
+the key of the channel to set. Either an index (Int), or one of the keys in code::channelTypes::.
+
+
+ARGUMENT:: rawVal
+an integer or an array of integers. The values will be assigned to the channels subsequent to the channel specified by code::key::.
+
+METHOD:: flush
+flush (clear) the current state of the fixture to the DMX device.
+
+SUBSECTION:: Introspection
+
+METHOD:: dmxAddr
+the DMX address of the fixture. This is a 0-based value.
+
+
+METHOD:: universeId
+the universe Id of the fixture. This is a 0-based value.
+This is useful for SimpleDMX devices that support multiple universes. If you are using a single universe, you should keep it at its default value (0).
+
+METHOD:: numChannels
+the number of channels the fixture uses.
+
+METHOD:: desc
+a code::Dictionary:: containing the description of this fixture. See code::new:: for more details.
+
+METHOD:: state
+the current state of the fixture. This is an array of integer values. The values are ordered according to the code::channelTypes:: description of the fixture. The size of the array is restricted to code::numChannels::.
+
+
+EXAMPLES::
+
+code::
+// a non-descript LED Par with rgbw-Control and global dim
+f = SimpleDMXFixture(0, 5, desc: (\channelTypes: #[dim, r, g, b, white]));
+f.set(0, 0.5); // set dim to 0.5
+f.set(1, 0.5); // set r to 0.5
+f.set(\g, [0.89, 0.4]); // set g/b to 0.89, and 0.4 resp.
+f.state; // -> [ 128, 128, 227, 102, 0 ]
+
+
+
+// an Astera AX3 in mode 13 with address 20 (0-based)
+f = SimpleDMXFixture.newFor(\ax3, \13, dmxAddr: 20);
+f.setColor(Color.red);
+f.state; // -> [ 255, 255, 0, 0, 0, 0, 0 ]
+::

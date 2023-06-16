@@ -1,10 +1,12 @@
 TITLE:: SimpleEnttecDMXPro
 summary:: interface for communication with the Enttec DMX pro Mk2 device
-categories:: dmx
+categories::  External Control>DMX
 related:: Classes/SimpleEnttecDMXPro, Classes/SimpleDMXUniverse
 
 DESCRIPTION::
 barebones and low-level implementation to handle DMX communication (send only) with the Enttec DMX Pro Mk2 (two universes).
+
+note::Although DMX addresses are typically documented 1-based, all SimpleDMX data structures are 0-based.::
 
 
 CLASSMETHODS::

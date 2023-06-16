@@ -1,0 +1,117 @@
+TITLE:: SimpleDMX
+summary:: an abstract DMX interface 
+categories::  External Control>DMX
+related:: Classes/SimpleAbstractSerialDMX, Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXUniverse, Classes/SimpleDMXFixture
+
+DESCRIPTION::
+barebones DMX interface.  Not intended to be used directly, but rather to be subclassed by a class that implements the actual DMX interface. For serial-based hardware, see link::Classes/SimpleAbstractSerialDMX::.
+
+note::Although DMX addresses are typically documented 1-based, all SimpleDMX data structures are 0-based.::
+
+
+CLASSMETHODS::
+
+METHOD:: new
+create a new SimpleDMX object
+
+ARGUMENT:: universeSizes
+An array of integers, one for each universe, specifying the number of channels in each universe.  If not specified, defaults to 512 channels per universe.
+
+ARGUMENT:: cmdperiod
+if code::true::, the serial port will be closed on command-period.
+
+
+PRIVATE:: basicNew
+
+INSTANCEMETHODS::
+
+PRIVATE:: initUniverses, open, close
+
+METHOD:: latency
+amount of time to wait before sending DMX data, in seconds.  Defaults to code::nil::.
+
+
+SUBSECTION:: State handling
+
+METHOD:: add
+add the current state of a code::SimpleDMXFixture:: to the internal DMX state. 
+Since the fixture knows its universe, it is added to the respective universe. Fails silently if the fixture does not have known code::universeId::. See code::getUniverse:: for details.
+
+ARGUMENT:: fixture
+the code::SimpleDMXFixture:: to add.
+
+METHOD:: addChannelVals
+add values to the internal DMX state.  The values are added to the respective universe. 
+
+ARGUMENT:: channel
+the index where to start inserting values.
+
+ARGUMENT:: vals
+an array of values to add.
+
+ARGUMENT:: universeId
+the code::universeId:: of the universe to add values to. 
+Fails silently if the universe corresponding to code::universeId:: does not exist.
+
+METHOD:: setState
+set state(s) of the specified universe. 
+See link::Classes/SimpleDMXUniverse#state:: for details.
+
+ARGUMENT:: state
+an array of values to set. If an array, it is assumed to be an array of values to set. 
+
+ARGUMENT:: universeId
+the code::universeId:: of the universe to set the state of. 
+If not specified, all universes will be set.
+Fails silently if the universe corresponding to code::universeId:: does not exist.
+
+METHOD:: blackout, flush
+set all channels in a universe to 0.
+
+ARGUMENT:: universeId
+the code::universeId:: of the universe to blackout. 
+Fails silently if the universe corresponding to code::universeId:: does not exist.
+
+METHOD:: blackoutAll, flushAll
+set all channels in all universes to 0.
+
+SUBSECTION:: Introspection
+
+METHOD:: universes
+an array of link::Classes/SimpleDMXUniverse:: objects.
+
+METHOD:: getUniverse
+returns the code::SimpleDMXUniverse:: with the given code::universeId::. If no such universe exists, returns code::nil::.
+
+ARGUMENT:: id
+the code::universeId:: of the universe to return.
+
+METHOD:: trace
+if code::true::, debugging information will be printed to the console.
+
+
+SUBSECTION:: Sending DMX data
+
+METHOD:: sendDMX
+send the current DMX state to the hardware.  
+
+ARGUMENT:: universeId
+the code::universeId:: of the universe to send. If not specified, all universes will be sent. 
+Fails silently if the universe corresponding to code::universeId:: does not exist.
+
+EXAMPLES::
+
+code::
+// create a DMX object, default to a single universe of 512 channels
+d = SimpleDMX();
+
+// get a fixture and set its color
+f = SimpleDMXFixture(0, 5, universeId: 0, desc: (\channelTypes: #[dim, r, g, b, white]));
+f.setColor(Color.white);
+
+// add the fixture to the DMX state
+d.add(f);
+
+// get state
+d.getState
+::
