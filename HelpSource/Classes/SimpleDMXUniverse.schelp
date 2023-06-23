@@ -11,15 +11,16 @@ See link::Classes/SimpleEnttecDMXPro:: for usage example.
 CLASSMETHODS::
 
 METHOD:: new
+argument:: size
+Size of universe. default (and max) is 512.
+Resizing flushes the universe.
+
 argument:: header
 prepend universe by this. will be converted into 8-bit int.
 
 argument:: footer
 append universe by this. will be converted into 8-bit int.
 
-argument:: size
-Size of universe. default (and max) is 512.
-Resizing flushes the universe.
 
 
 

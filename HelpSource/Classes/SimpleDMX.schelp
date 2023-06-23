@@ -1,7 +1,7 @@
-TITLE:: SimpleDMX
+class:: SimpleDMX
 summary:: an abstract DMX interface 
 categories::  External Control>DMX
-related:: Classes/SimpleAbstractSerialDMX, Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXUniverse, Classes/SimpleDMXFixture
+related:: Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXUniverse, Classes/SimpleDMXFixture
 
 DESCRIPTION::
 barebones DMX interface.  Not intended to be used directly, but rather to be subclassed by a class that implements the actual DMX interface. For serial-based hardware, see link::Classes/SimpleAbstractSerialDMX::.

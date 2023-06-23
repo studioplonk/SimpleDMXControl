@@ -71,8 +71,13 @@ SimpleDMX {
 
 	add {|fixture|
 		// fixture knows its universe, so we can just add it there
-		// if universe is not 0, we ignore it
-		var universe = this.getUniverse(fixture.universeId);
+		var universe;
+		
+		// if universe is not 0 or nil, we ignore it
+		fixture.universeId.notNil.if{
+			universe = this.getUniverse(fixture.universeId);
+		};
+
 		universe.notNil.if{
 			universe.add(fixture)
 		}

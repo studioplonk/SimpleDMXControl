@@ -1,7 +1,7 @@
-TITLE:: SimpleEnttecDMXPro
+CLASS:: SimpleEnttecDMXPro
 summary:: interface for communication with the Enttec DMX pro device
 categories::  External Control>DMX
-related:: Classes/SimpleAbstractSerialDMX, Classes/SimpleEnttecDMXPro, Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXUniverse, Classes/SimpleDMXFixture, Classes/SerialPort
+related:: Classes/SimpleEnttecDMXProMk2, Classes/SimpleDMXUniverse, Classes/SimpleDMXFixture
 
 DESCRIPTION::
 barebones and low-level implementation to handle DMX communication (send only) with the Enttec DMX Pro.
@@ -25,9 +25,6 @@ if code::true::, the serial port will be closed on command-period.
 INSTANCEMETHODS::
 
 PRIVATE:: initSimpleEnttecDMXPro
-
-
-
 
 
 EXAMPLES::
