@@ -12,7 +12,7 @@ note::Although DMX addresses are typically documented 1-based, all SimpleDMX dat
 CLASSMETHODS::
 
 METHOD:: new
-create a new non-descript fixture. 
+create a new non-descript fixture.
 
 code::
 // a non-descript LED Par with rgbw-Control and global dim
@@ -23,7 +23,7 @@ f.state; // -> [ 255, 255, 0, 0 ]
 
 
 ARGUMENT:: dmxAddr
-the starting address of the fixture (0-based). 
+the starting address of the fixture (0-based).
 
 ARGUMENT:: numChannels
 number of channels the fixture uses.
@@ -45,8 +45,16 @@ definitionlist::
      || A short description of the functionality of the fixture, e.g. code::"DRGBAWS"::.
      ## code::channelTypes:: (recommended)
      || An code::Array:: of code::Symbols::s describing the semantic of each channel. The symbols are typically one of code:: #[r, g, b, a, white, dim, strobe, dur, x, y, z]::.
+     ## code::description:: (recommended)
+     || A code::String:: explaning the functionality of the fixture in detail.
+     ## code::manual:: (recommended)
+     || URL of the manual.
+     ## code::typeRanges:: (recommended)
+     || A code::Dictionary:: with ranges for some channel types.
 ::
 
+ARGUMENT:: device
+a code::SimpleDMX:: device (optional).
 
 
 METHOD:: newFor
@@ -72,6 +80,9 @@ the starting address of the fixture (0-based).
 
 ARGUMENT:: universeId
 the id of the universe the fixture is in. This is useful for SimpleDMX devices that support multiple universes. If you are using a single universe, you should keep it at its default value (0).
+
+ARGUMENT:: device
+a code::SimpleDMX:: device (optional).
 
 
 METHOD:: models
@@ -109,6 +120,9 @@ ARGUMENT:: val
 either a numeric normalised value or an array of normalised values.
 The values will be assigned to the channels subsequent to the channel specified by code::key::.
 
+ARGUMENT:: send
+if code::true::, commits the fixture's state to its device.
+
 
 METHOD:: setColor
 A convenience method that sets the values of the channels code::r::, code::g::, code::b:: and code::dim::.
@@ -125,6 +139,8 @@ f.state; // -> [ 255, 255, 0, 0, 0, 0, 0 ]
 ARGUMENT:: color
 A link::Classes/Color:: object.
 
+ARGUMENT:: send
+if code::true::, commits the fixture's state to its device.
 
 
 METHOD:: setRaw
@@ -137,6 +153,17 @@ the key of the channel to set. Either an index (Int), or one of the keys in code
 
 ARGUMENT:: rawVal
 an integer or an array of integers. The values will be assigned to the channels subsequent to the channel specified by code::key::.
+
+ARGUMENT:: send
+if code::true::, commits the fixture's state to its device.
+
+
+METHOD:: send
+commits the fixture's state to its device.
+
+ARGUMENT:: flushDevice
+if code::true::, flush the device after sending.
+
 
 METHOD:: flush
 flush (clear) the current state of the fixture to the DMX device.
