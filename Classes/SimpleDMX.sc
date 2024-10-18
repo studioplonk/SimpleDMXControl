@@ -2,6 +2,8 @@ SimpleDMX {
 	var <>universes;
 	var <>trace = false;
 	var <>latency = nil;
+	var gui = nil;
+
 
 	*basicNew {|cmdperiod = true|
         // SimpleDMX.basicNew.states; // does not have any states
@@ -26,11 +28,11 @@ SimpleDMX {
     }
 
 	open {
-		this.subclassResponsibility(thisMethod);
+		// this.subclassResponsibility(thisMethod);
 	}
 
 	close {
-		this.subclassResponsibility(thisMethod);
+		// this.subclassResponsibility(thisMethod);
 	}
 
 	////////////////////// state handling //////////////////////
@@ -59,7 +61,7 @@ SimpleDMX {
 
     getState {|universeId|
         var universe;
-        
+
         universeId.isNil.if{
             ^universes.collect(_.state);
         };
@@ -72,14 +74,15 @@ SimpleDMX {
 	add {|fixture|
 		// fixture knows its universe, so we can just add it there
 		var universe;
-		
+
 		// if universe is not 0 or nil, we ignore it
 		fixture.universeId.notNil.if{
 			universe = this.getUniverse(fixture.universeId);
 		};
 
 		universe.notNil.if{
-			universe.add(fixture)
+			// support setting multiple universes with one fixture
+			universe.bubble.flat.do(_.add(fixture))
 		}
 	}
 
@@ -122,8 +125,8 @@ SimpleDMX {
 
         // if no universeId is given, send all universes
         universeId.isNil.if{
-            universes.do({|universe|
-                this.sendDMX(universe.id, flush);
+            universes.do({|universe, id|
+                this.sendDMX(id, flush);
             });
             ^this;
         };

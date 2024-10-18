@@ -2,7 +2,7 @@ SimpleDMXFixture {
 	classvar <dmxSpec;
 	classvar <models;
 	var <dmxAddr;
-	var <universeId;
+	var <>universeId;
 	var <state;
 	var <numChannels;
 	var <desc;
@@ -36,6 +36,73 @@ SimpleDMXFixture {
 							relOffOn: (0..255)
 						)
 					),
+					\drawFunc: {|fixture, bounds|
+
+						var extentHalf = bounds.extent * 0.5;
+
+						var dim = fixture.get(\dim);
+
+						var color = Color.black.blend(fixture.getColor, dim);
+						var colorBounds = Rect(
+							0, 0,
+							*extentHalf.asArray
+						);
+						var dimString = "\tdim: %"
+						.format(fixture.getRaw(\dim));
+						var dimStringBounds = Rect(
+							0, 0,
+							extentHalf.x * 2, extentHalf.y
+						);
+
+						var white = Color.gray(fixture.get(\white) * dim);
+						var whiteBounds = Rect(
+							extentHalf.x, 0,
+							*extentHalf.asArray
+						);
+
+						var strobeDurString = " s:\t%\n d:\t%"
+						.format(*fixture.getRaw(\strobe, 2).collect(_.asStringToBase(10, 3)));
+						var strobeDurBounds = Rect(
+							0, extentHalf.y,
+							*extentHalf.asArray
+						);
+
+						var fixtureString = "%".format(fixture.dmxAddr);
+						var fixtureBounds = Rect(
+							extentHalf.x, extentHalf.y,
+							*extentHalf.asArray
+						);
+
+
+						Pen.use{
+							Pen.color = Color.black;
+							Pen.fillRect(bounds);
+
+
+							// color
+							Pen.color = color;
+							Pen.fillRect(colorBounds);
+
+
+							// white
+							Pen.color = white;
+							Pen.fillRect(whiteBounds);
+
+							// dim string
+							Pen.color = Color.gray(0.5);
+							Pen.stringLeftJustIn(dimString, dimStringBounds, Font.monospace(10));
+
+
+							// strobeDur
+							Pen.color = Color.white;
+							Pen.stringLeftJustIn(strobeDurString, strobeDurBounds, Font.monospace(10));
+
+
+							Pen.color = Color.grey(1, 0.5);
+							Pen.stringCenteredIn(fixture.dmxAddr.asString, fixtureBounds, Font.monospace(30));
+
+						};
+					}
 				)
 			)
 		);
@@ -103,16 +170,67 @@ SimpleDMXFixture {
 		};
 	}
 
+	getRaw {|key, numVals = 1|
+		var idx;
+
+		key.isKindOf(Integer).if({
+			idx = key;
+		}, {
+			idx = idxKeys[key]
+		});
+
+		idx.notNil.if{
+			(numVals > 1).if({
+				^state.copyRange(idx, idx+numVals-1);
+			}, {
+				^state[idx];
+			})
+		};
+		^nil;
+	}
+
+
 	// expects values between 0..1.0
 	set {|key, val, send = false|
 		this.setRaw(key, dmxSpec.map(val).asInteger, send)
 	}
 
-	// a color's alpha is considered dim (if available in fixture spec, otherwise ignored).
+	get {|key, numVals = 1|
+		^dmxSpec.unmap(this.getRaw(key, numVals));
+	}
+
+
+	// a color's alpha is ignored
 	setColor {|color, send = false|
 		var rgbw = color.asArray;
-		this.set(\dim, rgbw.last);
+		// this.set(\dim, rgbw.last);
 		this.set(\r, rgbw[0..2], send);
+	}
+
+	setColorDim {|color, dim = 1, send = false|
+		var rgbw = color.asArray;
+		// this.set(\dim, rgbw.last);
+		this.set(\r, rgbw[0..2]);
+		this.set(\dim, dim, send);
+	}
+
+	rgbwDim {|r = 1, g = 1, b = 1, w = 1, dim = 1, send = false|
+		this.set(\r, [r, g, b]);
+		this.set(\white, w);
+		this.set(\dim, dim, send);
+	}
+
+	rgbwDimRaw {|r = 255, g = 255, b = 255, w = 255, dim = 255, send = false|
+		this.setRaw(\r, [r, g, b]);
+		this.setRaw(\white, w);
+		this.setRaw(\dim, dim, send);
+	}
+
+
+	getColor {
+		var arr = this.get(\r, 3);
+
+		^Color.fromArray(arr);
 	}
 
 	state_ {|val|
