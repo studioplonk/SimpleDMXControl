@@ -89,9 +89,13 @@ SimpleDMX {
 	addChannelVals {|channel = 0, vals = 0, universeId = 0|
 		// if universe is not 0, we ignore it
 		var universe = this.getUniverse(universeId);
-		universe.notNil.if{
+		universe.notNil.if({
 			universe.addChannelVals(channel, vals)
-		}
+		}, {
+			universes.do{|universe|
+				universe.addChannelVals(channel, vals)
+			}
+		})
 	}
 
     blackout {|universeId = 0|
@@ -114,7 +118,11 @@ SimpleDMX {
 	}
 
 	getUniverse {|id = 0|
-		^universes[id]
+		id.notNil.if({
+			^universes[id]
+		}, {
+			^nil
+		})
 	}
 
 
