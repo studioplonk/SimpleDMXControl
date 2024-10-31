@@ -75,15 +75,18 @@ SimpleDMX {
 		// fixture knows its universe, so we can just add it there
 		var universe;
 
-		// if universe is not 0 or nil, we ignore it
-		fixture.universeId.notNil.if{
+		// if universeId is set, we use it
+		fixture.universeId.notNil.if({
 			universe = this.getUniverse(fixture.universeId);
-		};
-
-		universe.notNil.if{
-			// support setting multiple universes with one fixture
-			universe.bubble.flat.do(_.add(fixture))
-		}
+			universe.notNil.if({
+				universe.add(fixture)
+			})
+		}, {
+			// if universe is not set, we send to all universes
+			universes.do{|universe|
+				universe.add(fixture)
+			}
+		});
 	}
 
 	addChannelVals {|channel = 0, vals = 0, universeId = 0|
