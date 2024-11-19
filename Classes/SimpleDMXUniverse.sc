@@ -35,7 +35,13 @@ SimpleDMXUniverse {
 	}
 
 	addChannelVals {|channel = 1, vals = 0|
-		// insert values
+		vals = vals.asArray;
+
+		// insert values only if array has correct size
+		((channel + vals.size) > size).if{
+			"%: Attempt to write outside of universe size, ingoring (%, %).".format(this.class, channel, vals).warn;
+			^this
+		};
 		state = state.overWrite(vals.asArray, channel);
 	}
 

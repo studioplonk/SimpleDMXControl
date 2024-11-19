@@ -73,7 +73,6 @@ SimpleDMXFixture {
 							*extentHalf.asArray
 						);
 
-
 						Pen.use{
 							Pen.color = Color.black;
 							Pen.fillRect(bounds);
@@ -250,6 +249,15 @@ SimpleDMXFixture {
 
 	}
 
+	printOn { arg stream;
+        if (stream.atLimit, { ^this });
+        stream << this.class.asCompileString << "(" << dmxAddr.asCompileString << ", " << numChannels.asCompileString << ", " << universeId.asCompileString << ")";
+    }
+
+    storeOn { arg stream;
+        if (stream.atLimit, { ^this });
+        stream << this.class.asCompileString << "(" << dmxAddr.asCompileString << ", " << numChannels.asCompileString << ", " << universeId.asCompileString << ")";
+    }
 }
 
 
